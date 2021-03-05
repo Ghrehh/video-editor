@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import './App.css';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import tune from './tune.m4a';
 import png from './png.png';
@@ -55,12 +56,13 @@ function App() {
 
   const tracks = [
     {
-      name: 'Audio',
+      name: 'Video',
       elements: [
         {
-          name: 'Audio',
-          start: 0,
-          duration: 400
+          name: 'Rect',
+          start: 100,
+          duration: 200,
+          additional: 'foo'
         }
       ]
     }

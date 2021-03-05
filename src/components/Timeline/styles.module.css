@@ -1,0 +1,36 @@
+.timeline {
+  width: 100%;
+  display: flex;
+}
+
+.headerEquivalent{
+  height: 20px;
+}
+
+.trackControl {
+  grid-column-start: info;
+  grid-column-end: contents;
+  background-color: #2b2b29;
+  color: white;
+  padding: 20px;
+}
+
+.leftColumn {
+  flex: 1;
+  background-color: #ad7d3e;
+  min-width: 0;
+}
+
+.header {
+  background-color: red;
+  height: 20px;
+}
+
+.tracks {
+  overflow: scroll;
+  width: 100%;
+}
+.track {
+  position: relative;
+  background-color: blue;
+}
