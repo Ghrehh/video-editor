@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, MouseEvent } from 'react';
 import styles from './styles.module.css';
 
 interface TrackElement {
@@ -12,15 +12,16 @@ interface Track {
   elements: TrackElement[];
 }
 
-const Timeline = ({ tracks }: { tracks: Track[] }) => {
+const Timeline = ({ tracks, cursor, setCursor }: { tracks: Track[], cursor: number, setCursor: (n: number) => void }) => {
   const trackControlsRef: React.RefObject<HTMLDivElement> = useRef(null);
   const tracksRef: React.RefObject<HTMLDivElement> = useRef(null);
-
+  const cursorHandleRef: React.RefObject<HTMLDivElement> = useRef(null);
 
   useEffect(() => {
     const trackControlsContainer = trackControlsRef.current;
     const tracksContainer = tracksRef.current;
-    if (!trackControlsContainer || !tracksContainer) return;
+    const cursorHandle = cursorHandleRef.current;
+    if (!trackControlsContainer || !tracksContainer || !cursorHandle) return;
     const trackControls = Array.from(trackControlsContainer.children)
     const tracks = Array.from(tracksContainer.children)
 
@@ -32,12 +33,29 @@ const Timeline = ({ tracks }: { tracks: Track[] }) => {
 
       track.style.height = `${trackControl.getBoundingClientRect().height}px`
     })
+
+    cursorHandle.style.height = '100%';
+    cursorHandle.style.height = `${
+      trackControlsContainer.getBoundingClientRect().height +
+      cursorHandle.getBoundingClientRect().height
+    }px`
   }, []);
+
+  const handleCursorClick = (e: MouseEvent) => {
+    const target = e.target;
+    console.log(e);
+    if (target instanceof HTMLDivElement) {
+      const location = e.clientX - target.getBoundingClientRect().left;
+      if (location < 0) return setCursor(0);
+      setCursor(location);
+    }
+
+  }
 
   return (
     <div className={styles.timeline}>
       <div className={styles.rightColumn}>
-        <div className={styles.headerEquivalent} />
+        <div className={styles.cursorEquivalent} />
         <div ref={trackControlsRef}>
           {tracks.map(track => {
             return (
@@ -49,7 +67,13 @@ const Timeline = ({ tracks }: { tracks: Track[] }) => {
         </div>
       </div>
       <div className={styles.leftColumn}>
-        <div className={styles.header} />
+        <div className={styles.cursor} onClick={handleCursorClick}>
+          <div
+            ref={cursorHandleRef}
+            className={styles.handle}
+            style={{ left: `${cursor}px` }}
+          />
+        </div>
         <div className={styles.tracks} ref={tracksRef}>
           {tracks.map(track => {
             return (

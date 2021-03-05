@@ -3,7 +3,7 @@
   display: flex;
 }
 
-.headerEquivalent{
+.cursorEquivalent {
   height: 20px;
 }
 
@@ -13,24 +13,34 @@
   background-color: #2b2b29;
   color: white;
   padding: 20px;
+  margin-bottom: 10px;
 }
 
 .leftColumn {
   flex: 1;
-  background-color: #ad7d3e;
   min-width: 0;
+  overflow: scroll;
 }
 
-.header {
+.cursor {
   background-color: red;
   height: 20px;
 }
 
+.handle {
+  width: 3px;
+  background-color: black;
+  height: 100%;
+  position: relative;
+  z-index: 2;
+}
+
 .tracks {
-  overflow: scroll;
   width: 100%;
 }
+
 .track {
   position: relative;
   background-color: blue;
+  margin-bottom: 10px;
 }

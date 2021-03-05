@@ -5,6 +5,7 @@ import tune from './tune.m4a';
 import png from './png.png';
 import dog1 from './dog1.jpeg';
 import dog2 from './dog2.jpeg';
+import Canvas from 'components/Canvas';
 import Timeline from 'components/Timeline';
 
 function App() {
@@ -12,6 +13,8 @@ function App() {
   const [texts, setTexts] = useState<string[]>([]);
   const ffmpeg = createFFmpeg({ log: true });
   const [videoSrc, setVideoSrc] = useState('');
+  const [cursor, setCursor] = useState(0);
+
 
   const handleSubmit = () => {
     setTexts(texts.concat([currentText]));
@@ -62,7 +65,26 @@ function App() {
           name: 'Rect',
           start: 100,
           duration: 200,
-          additional: 'foo'
+          x: 100,
+          y: 100,
+          width: 40,
+          height: 60,
+          color: '#ad7d3e'
+        }
+      ]
+    },
+    {
+      name: 'Video',
+      elements: [
+        {
+          name: 'Rect',
+          start: 0,
+          duration: 200,
+          x: 10,
+          y: 10,
+          width: 400,
+          height: 60,
+          color: '#2b2b29'
         }
       ]
     }
@@ -70,7 +92,8 @@ function App() {
 
   return (
     <>
-      <Timeline tracks={tracks}/>
+      <Canvas tracks={tracks} cursor={cursor} />
+      <Timeline tracks={tracks} cursor={cursor} setCursor={setCursor}/>
       <input value={currentText} onChange={e => setCurrentText(e.target.value)} />
       <button onClick={handleSubmit}>Add</button>
       <br />

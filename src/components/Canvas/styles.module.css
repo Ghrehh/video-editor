@@ -1,0 +1,10 @@
+.canvasContainer {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+canvas {
+  width: 100%;
+  border: 1px solid black;
+}
