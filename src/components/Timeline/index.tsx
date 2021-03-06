@@ -1,18 +1,15 @@
 import React, { useRef, useEffect, MouseEvent } from 'react';
 import styles from './styles.module.css';
+import { Track } from 'types/Track';
 
-interface TrackElement {
-  name: string;
-  start: number;
-  duration: number;
+interface TimelineInterface {
+  tracks: Track[];
+  cursor: number;
+  setCursor: (n: number) => void;
+  setTracks: (n: any) => void;
 }
 
-interface Track {
-  name: string;
-  elements: TrackElement[];
-}
-
-const Timeline = ({ tracks, cursor, setCursor }: { tracks: Track[], cursor: number, setCursor: (n: number) => void }) => {
+const Timeline = ({ tracks, cursor, setCursor, setTracks }: TimelineInterface) => {
   const trackControlsRef: React.RefObject<HTMLDivElement> = useRef(null);
   const tracksRef: React.RefObject<HTMLDivElement> = useRef(null);
   const cursorHandleRef: React.RefObject<HTMLDivElement> = useRef(null);
@@ -49,7 +46,10 @@ const Timeline = ({ tracks, cursor, setCursor }: { tracks: Track[], cursor: numb
       if (location < 0) return setCursor(0);
       setCursor(location);
     }
-
+  }
+  
+  const handleDelete = (trackToDelete: Track) => {
+    setTracks(tracks.filter(track => track !== trackToDelete))
   }
 
   return (
@@ -57,10 +57,12 @@ const Timeline = ({ tracks, cursor, setCursor }: { tracks: Track[], cursor: numb
       <div className={styles.rightColumn}>
         <div className={styles.cursorEquivalent} />
         <div ref={trackControlsRef}>
-          {tracks.map(track => {
+          {tracks.map((track) => {
             return (
               <div className={styles.trackControl}>
                 {track.name}
+                <br />
+                <button onClick={() => handleDelete(track)}>Delete</button>
               </div>
             )
           })}
