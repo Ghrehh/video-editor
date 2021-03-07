@@ -247,7 +247,6 @@ function App() {
         tracks={tracks}
         cursor={cursor}
         setCursor={setCursor}
-        frameRate={frameRate}
       />
       <button onClick={handleAddText}>Add Text Element</button>
       <br />

@@ -70,6 +70,8 @@ const SelectedTrack = ({ track, setTrack }: SelectedTrackInterface) => {
         <label>
           duration <input value={element.duration} onChange={e => handleUpdate('duration', e.target.value)} />
         </label>
+        <br />
+        <br />
       </>
     )
   }
@@ -98,6 +100,8 @@ const SelectedTrack = ({ track, setTrack }: SelectedTrackInterface) => {
         <label>
           duration <input value={element.duration} onChange={e => handleUpdate('duration', e.target.value)} />
         </label>
+        <br />
+        <br />
       </>
     )
   }

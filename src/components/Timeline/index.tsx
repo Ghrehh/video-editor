@@ -9,7 +9,6 @@ interface TimelineInterface {
   setTracks: (n: Track[]) => void;
   selectedTrack: number;
   setSelectedTrack: (n: number) => void;
-  frameRate: number;
 }
 
 const Timeline = ({
@@ -19,12 +18,12 @@ const Timeline = ({
   setTracks,
   selectedTrack,
   setSelectedTrack,
-  frameRate
 }: TimelineInterface) => {
   const trackControlsRef: React.RefObject<HTMLDivElement> = useRef(null);
   const tracksRef: React.RefObject<HTMLDivElement> = useRef(null);
   const cursorRef: React.RefObject<HTMLDivElement> = useRef(null);
   const cursorHandleRef: React.RefObject<HTMLDivElement> = useRef(null);
+  const indicatorsRef: React.RefObject<HTMLDivElement> = useRef(null);
 
   const getProjectLength = () => {
     let longest = 0;
@@ -43,7 +42,8 @@ const Timeline = ({
     const tracksContainer = tracksRef.current;
     const cursorHandle = cursorHandleRef.current;
     const cursor = cursorRef.current;
-    if (!trackControlsContainer || !tracksContainer || !cursorHandle || !cursor) return;
+    const indicators = indicatorsRef.current;
+    if (!trackControlsContainer || !tracksContainer || !cursorHandle || !cursor || !indicators) return;
     const trackControls = Array.from(trackControlsContainer.children)
     const tracks = Array.from(tracksContainer.children)
 
@@ -56,7 +56,16 @@ const Timeline = ({
       track.style.height = `${trackControl.getBoundingClientRect().height}px`
     })
 
-    cursor.style.width = `${getProjectLength()}px`
+    cursor.style.width = `${getProjectLength() / 40}px`
+    const indicatorCount = Math.floor(getProjectLength() / 1000);
+    indicators.innerHTML = '';
+    for (let i = 0; i < indicatorCount; i++) {
+      const indicator = document.createElement('div');
+      indicator.innerHTML = `${i + 1}`;
+      indicator.style.width = '25px';
+      indicator.style.display = 'inline-block';
+      indicators.appendChild(indicator);
+    }
 
     cursorHandle.style.height = '100%';
     cursorHandle.style.height = `${
@@ -67,11 +76,10 @@ const Timeline = ({
 
   const handleCursorClick = (e: MouseEvent) => {
     const target = e.target;
-    console.log(e);
     if (target instanceof HTMLDivElement) {
       const location = e.clientX - target.getBoundingClientRect().left;
       if (location < 0) return setCursor(0);
-      setCursor(location);
+      setCursor(location * 40);
     }
   }
 
@@ -82,7 +90,7 @@ const Timeline = ({
   return (
     <div className={styles.timeline}>
       <div className={styles.rightColumn}>
-        <div className={styles.cursorEquivalent} />
+        <div className={styles.cursorEquivalent}> Click to scrub{"=>"}</div>
         <div ref={trackControlsRef}>
           {tracks.map((track) => {
             return (
@@ -98,9 +106,13 @@ const Timeline = ({
       <div className={styles.leftColumn}>
         <div ref={cursorRef} className={styles.cursor} onClick={handleCursorClick}>
           <div
+            ref={indicatorsRef}
+            className={styles.indicators}
+          />
+          <div
             ref={cursorHandleRef}
             className={styles.handle}
-            style={{ left: `${cursor}px` }}
+            style={{ left: `${cursor / 40}px` }}
           />
         </div>
         <div className={styles.tracks} ref={tracksRef}>
@@ -111,8 +123,8 @@ const Timeline = ({
                 className={styles.track}
                 style={{
                   border: i === selectedTrack ? '4px solid red' : 'none',
-                  left: track.elements[0]?.start / frameRate,
-                  width: track.elements[0]?.duration / frameRate
+                  left: track.elements[0]?.start / 40,
+                  width: track.elements[0]?.duration / 40
                 }}
               />
             )
