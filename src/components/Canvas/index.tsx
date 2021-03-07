@@ -17,8 +17,8 @@ const Canvas = ({ tracks, cursor }: { tracks: Track[], cursor: number }) => {
     <div className={styles.canvasContainer}>
       <canvas
         className={styles.canvas} 
-        width={1600}
-        height={900}
+        width={800}
+        height={450}
         ref={canvasRef}
       />
     </div>

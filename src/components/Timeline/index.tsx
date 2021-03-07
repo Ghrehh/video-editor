@@ -14,13 +14,27 @@ interface TimelineInterface {
 const Timeline = ({ tracks, cursor, setCursor, setTracks, selectedTrack, setSelectedTrack }: TimelineInterface) => {
   const trackControlsRef: React.RefObject<HTMLDivElement> = useRef(null);
   const tracksRef: React.RefObject<HTMLDivElement> = useRef(null);
+  const cursorRef: React.RefObject<HTMLDivElement> = useRef(null);
   const cursorHandleRef: React.RefObject<HTMLDivElement> = useRef(null);
+
+  const getProjectLength = () => {
+    let longest = 0;
+    tracks.forEach((track) => {
+      track.elements.forEach((element) => {
+        const length = element.start + element.duration;
+        if (length > longest) longest = length;
+      });
+    })
+
+    return longest;
+  }
 
   useEffect(() => {
     const trackControlsContainer = trackControlsRef.current;
     const tracksContainer = tracksRef.current;
     const cursorHandle = cursorHandleRef.current;
-    if (!trackControlsContainer || !tracksContainer || !cursorHandle) return;
+    const cursor = cursorRef.current;
+    if (!trackControlsContainer || !tracksContainer || !cursorHandle || !cursor) return;
     const trackControls = Array.from(trackControlsContainer.children)
     const tracks = Array.from(tracksContainer.children)
 
@@ -32,6 +46,8 @@ const Timeline = ({ tracks, cursor, setCursor, setTracks, selectedTrack, setSele
 
       track.style.height = `${trackControl.getBoundingClientRect().height}px`
     })
+
+    cursor.style.width = `${getProjectLength()}px`
 
     cursorHandle.style.height = '100%';
     cursorHandle.style.height = `${
@@ -71,7 +87,7 @@ const Timeline = ({ tracks, cursor, setCursor, setTracks, selectedTrack, setSele
         </div>
       </div>
       <div className={styles.leftColumn}>
-        <div className={styles.cursor} onClick={handleCursorClick}>
+        <div ref={cursorRef} className={styles.cursor} onClick={handleCursorClick}>
           <div
             ref={cursorHandleRef}
             className={styles.handle}
