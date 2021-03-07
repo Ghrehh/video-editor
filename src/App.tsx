@@ -18,6 +18,7 @@ function App() {
   const [cursor, setCursor] = useState(0);
   const [selectedTrack, setSelectedTrack] = useState(0);
   const [frameRate, setFrameRate] = useState(25);
+  const [audioUrl, setAudioUrl] = useState('');
   const [tracks, setTracks] = useState<Track[]>([
     {
       name: 'Rect',
@@ -117,7 +118,7 @@ function App() {
         document.body.appendChild(image);
       })
       */
-      render(urls, frameRate).then(videoUrl => {
+      render(urls, frameRate, audioUrl).then(videoUrl => {
         setRendering(false)
         setVideoSrc(videoUrl);
       });
@@ -172,16 +173,48 @@ function App() {
               name: 'song',
               start: 0,
               duration: Math.round(audio.duration * 1000),
-              url: tune
+              url: tune,
+              type: 'mp3'
             }
           ]
         }
       )
       setTracks(tracksCopy);
+      setAudioUrl(tune);
     }
     audio.src = tune;
 
   }, [])
+
+  const handleFileUpload = (files: FileList | null) => {
+    if (!files) return;
+    const file = files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const audio = document.createElement('audio');
+    audio.ondurationchange = () => {
+      if (isNaN(audio.duration) || audio.duration === Infinity) return;
+      const tracksCopy = [...tracks];
+      tracksCopy.push(
+        {
+          name: 'Audio',
+          elements: [
+            {
+              identifier: 'Audio',
+              name: 'song',
+              start: 0,
+              duration: Math.round(audio.duration * 1000),
+              url,
+              type: 'mp3'
+            }
+          ]
+        }
+      )
+      setTracks(tracksCopy);
+      setAudioUrl(url);
+    }
+    audio.src = url;
+  }
 
   if (videoSrc !== '') {
     return <video style={{ width: '100%' }} controls src={videoSrc} />
@@ -199,6 +232,10 @@ function App() {
         Frame Rate
         <input value={frameRate} onChange={e => setFrameRate(num(e.target.value))} />
       </label>
+      <label>
+        Upload Audio (only MP3s will work for now)
+        <input type="file" id="input" onChange={e => handleFileUpload(e.target.files)}/>
+      </label>
       <Canvas tracks={tracks} cursor={cursor} />
       {tracks[selectedTrack] && <SelectedTrack setTrack={(updatedTrack: Track) => updateTrack(selectedTrack, updatedTrack)} track={tracks[selectedTrack]}
       />}
@@ -209,6 +246,7 @@ function App() {
         tracks={tracks}
         cursor={cursor}
         setCursor={setCursor}
+        frameRate={frameRate}
       />
       <button onClick={handleAddText}>Add Text</button>
       <button onClick={handleRender}>Render</button>

@@ -9,9 +9,18 @@ interface TimelineInterface {
   setTracks: (n: Track[]) => void;
   selectedTrack: number;
   setSelectedTrack: (n: number) => void;
+  frameRate: number;
 }
 
-const Timeline = ({ tracks, cursor, setCursor, setTracks, selectedTrack, setSelectedTrack }: TimelineInterface) => {
+const Timeline = ({
+  tracks,
+  cursor,
+  setCursor,
+  setTracks,
+  selectedTrack,
+  setSelectedTrack,
+  frameRate
+}: TimelineInterface) => {
   const trackControlsRef: React.RefObject<HTMLDivElement> = useRef(null);
   const tracksRef: React.RefObject<HTMLDivElement> = useRef(null);
   const cursorRef: React.RefObject<HTMLDivElement> = useRef(null);
@@ -102,8 +111,8 @@ const Timeline = ({ tracks, cursor, setCursor, setTracks, selectedTrack, setSele
                 className={styles.track}
                 style={{
                   border: i === selectedTrack ? '4px solid red' : 'none',
-                  left: track.elements[0]?.start,
-                  width: track.elements[0]?.duration
+                  left: track.elements[0]?.start / frameRate,
+                  width: track.elements[0]?.duration / frameRate
                 }}
               />
             )

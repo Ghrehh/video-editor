@@ -4,6 +4,7 @@ export interface Audio {
   start: number;
   duration: number;
   url: string;
+  type: string;
 }
 
 export const isAudio = (thing: any): thing is Audio => {
