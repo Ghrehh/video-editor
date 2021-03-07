@@ -6,10 +6,12 @@ interface TimelineInterface {
   tracks: Track[];
   cursor: number;
   setCursor: (n: number) => void;
-  setTracks: (n: any) => void;
+  setTracks: (n: Track[]) => void;
+  selectedTrack: number;
+  setSelectedTrack: (n: number) => void;
 }
 
-const Timeline = ({ tracks, cursor, setCursor, setTracks }: TimelineInterface) => {
+const Timeline = ({ tracks, cursor, setCursor, setTracks, selectedTrack, setSelectedTrack }: TimelineInterface) => {
   const trackControlsRef: React.RefObject<HTMLDivElement> = useRef(null);
   const tracksRef: React.RefObject<HTMLDivElement> = useRef(null);
   const cursorHandleRef: React.RefObject<HTMLDivElement> = useRef(null);
@@ -36,7 +38,7 @@ const Timeline = ({ tracks, cursor, setCursor, setTracks }: TimelineInterface) =
       trackControlsContainer.getBoundingClientRect().height +
       cursorHandle.getBoundingClientRect().height
     }px`
-  }, []);
+  });
 
   const handleCursorClick = (e: MouseEvent) => {
     const target = e.target;
@@ -47,7 +49,7 @@ const Timeline = ({ tracks, cursor, setCursor, setTracks }: TimelineInterface) =
       setCursor(location);
     }
   }
-  
+
   const handleDelete = (trackToDelete: Track) => {
     setTracks(tracks.filter(track => track !== trackToDelete))
   }
@@ -77,11 +79,13 @@ const Timeline = ({ tracks, cursor, setCursor, setTracks }: TimelineInterface) =
           />
         </div>
         <div className={styles.tracks} ref={tracksRef}>
-          {tracks.map(track => {
+          {tracks.map((track, i) => {
             return (
               <div
+                onClick={() => setSelectedTrack(i)}
                 className={styles.track}
                 style={{
+                  border: i === selectedTrack ? '4px solid red' : 'none',
                   left: track.elements[0]?.start,
                   width: track.elements[0]?.duration
                 }}

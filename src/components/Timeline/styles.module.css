@@ -23,7 +23,7 @@
 }
 
 .cursor {
-  background-color: red;
+  background-color: #964141;
   height: 20px;
 }
 
@@ -41,6 +41,7 @@
 
 .track {
   position: relative;
-  background-color: blue;
+  background-color: gray;
   margin-bottom: 10px;
+  box-sizing: border-box;
 }

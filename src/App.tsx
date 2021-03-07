@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
 import Canvas from 'components/Canvas';
 import Timeline from 'components/Timeline';
+import SelectedTrack from 'components/SelectedTrack';
 import drawTracks from 'lib/canvas'; 
 import render from 'lib/render';
 import { Track } from 'types/Track';
@@ -10,10 +11,11 @@ function App() {
   const [videoSrc, setVideoSrc] = useState('');
   const [rendering, setRendering] = useState(false);
   const [cursor, setCursor] = useState(0);
+  const [selectedTrack, setSelectedTrack] = useState(0);
 
   const [tracks, setTracks] = useState<Track[]>([
     {
-      name: 'Video',
+      name: 'Rect',
       elements: [
         {
           name: 'Rect',
@@ -29,7 +31,7 @@ function App() {
       ]
     },
     {
-      name: 'Video',
+      name: 'Rect',
       elements: [
         {
           name: 'Rect',
@@ -45,7 +47,7 @@ function App() {
       ]
     },
     {
-      name: 'Video',
+      name: 'Text',
       elements: [
         {
           identifier: 'Text',
@@ -62,6 +64,18 @@ function App() {
     },
   ]);
 
+  const getProjectLength = () => {
+    let longest = 0;
+    tracks.forEach((track) => {
+      track.elements.forEach((element) => {
+        const length = element.start + element.duration;
+        if (length > longest) longest = length;
+      });
+    })
+
+    return longest;
+  }
+
   const handleRender = () => {
     setRendering(true);
     const go = () => {
@@ -70,7 +84,7 @@ function App() {
       canvas.height = 900;
       const urls: string[] = [];
 
-      for (let i = 0; i < 300; i++) {
+      for (let i = 0; i < getProjectLength(); i++) {
         drawTracks(canvas, i, tracks);
         urls.push(canvas.toDataURL());
       }
@@ -92,6 +106,35 @@ function App() {
     setTimeout(go, 1);
   }
 
+  const updateTrack = (trackId: number, updatedTrack: Track) => {
+    const tracksCopy = [...tracks];
+    tracksCopy[trackId] = updatedTrack;
+    setTracks(tracksCopy);
+  }
+
+  const handleAddText = () => {
+    const tracksCopy = [...tracks];
+    tracksCopy.push(
+      {
+        name: 'Text',
+        elements: [
+          {
+            identifier: 'Text',
+            name: 'text',
+            start: 50,
+            duration: 200,
+            x: 100,
+            y: 100,
+            content: 'I am some text',
+            font: '48px serif',
+            color: 'green'
+          }
+        ]
+      }
+    )
+    setTracks(tracksCopy);
+  }
+
   if (videoSrc !== '') {
     return <video style={{ width: '100%' }} controls src={videoSrc} />
   }
@@ -104,8 +147,18 @@ function App() {
 
   return (
     <>
-      <Canvas  tracks={tracks} cursor={cursor} />
-      <Timeline setTracks={setTracks} tracks={tracks} cursor={cursor} setCursor={setCursor}/>
+      <Canvas tracks={tracks} cursor={cursor} />
+      {tracks[selectedTrack] && <SelectedTrack setTrack={(updatedTrack: Track) => updateTrack(selectedTrack, updatedTrack)} track={tracks[selectedTrack]}
+      />}
+      <Timeline
+        selectedTrack={selectedTrack}
+        setSelectedTrack={setSelectedTrack}
+        setTracks={setTracks}
+        tracks={tracks}
+        cursor={cursor}
+        setCursor={setCursor}
+      />
+      <button onClick={handleAddText}>Add Text</button>
       <button onClick={handleRender}>Render</button>
     </>
   );
