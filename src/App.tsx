@@ -5,7 +5,6 @@ import Timeline from 'components/Timeline';
 import SelectedTrack from 'components/SelectedTrack';
 import drawTracks from 'lib/canvas'; 
 import render from 'lib/render';
-//import tune from 'tune.m4a';
 import { Track } from 'types/Track';
 
 const num = (inputString: string): number => {
@@ -17,7 +16,7 @@ function App() {
   const [rendering, setRendering] = useState(false);
   const [cursor, setCursor] = useState(0);
   const [selectedTrack, setSelectedTrack] = useState(0);
-  const [frameRate, setFrameRate] = useState(25);
+  const [frameRate, setFrameRate] = useState(1);
   const [audioUrl, setAudioUrl] = useState('');
   const [tracks, setTracks] = useState<Track[]>([
     {
@@ -230,11 +229,12 @@ function App() {
   return (
     <>
       <label>
-        Frame Rate
+        Frame Rate (FPS)
         <input value={frameRate} onChange={e => setFrameRate(num(e.target.value))} />
       </label>
+      <br />
       <label>
-        Upload Audio (only MP3s will work for now)
+        Upload Audio (only MP3s work because I'm lazy)
         <input type="file" id="input" onChange={e => handleFileUpload(e.target.files)}/>
       </label>
       <Canvas tracks={tracks} cursor={cursor} />
@@ -249,8 +249,10 @@ function App() {
         setCursor={setCursor}
         frameRate={frameRate}
       />
-      <button onClick={handleAddText}>Add Text</button>
-      {audioUrl === '' && <p>Add audio to render</p>}
+      <button onClick={handleAddText}>Add Text Element</button>
+      <br />
+      <br />
+      {audioUrl === '' && <p>Add audio to enable rendering</p>}
       {audioUrl !== '' && <button onClick={handleRender}>Render</button>}
     </>
   );
