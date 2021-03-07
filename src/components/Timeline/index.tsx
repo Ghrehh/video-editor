@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, MouseEvent } from 'react';
 import styles from './styles.module.css';
 import { Track } from 'types/Track';
@@ -10,6 +11,8 @@ interface TimelineInterface {
   selectedTrack: number;
   setSelectedTrack: (n: number) => void;
 }
+
+let movingTrackId = -1;
 
 const Timeline = ({
   tracks,
@@ -36,6 +39,52 @@ const Timeline = ({
 
     return longest;
   }
+
+  const handleMouseUp = () => {
+    if (movingTrackId > -1) {
+      const tracksCopy = [ ...tracks];
+      const tracksContainer = tracksRef.current;
+
+      if (!tracksContainer) return;
+
+      const track = Array.from(tracksContainer.children)[movingTrackId]
+      if (!track) return;
+      if (!(track instanceof HTMLDivElement)) return;
+
+      const location = Number(track.style.left.slice(0, -2));
+      const trackCopy = tracksCopy[movingTrackId]?.elements[0];
+      if (!trackCopy) return;
+      trackCopy.start = Math.floor(location * 40);
+      setTracks(tracksCopy)
+      movingTrackId = -1;
+    }
+  }
+
+  const handleMouseMove = (e: any) => {
+    if (movingTrackId > -1) {
+      const tracks = tracksRef.current;
+
+      if (!tracks) return;
+
+      const track = Array.from(tracks.children)[movingTrackId]
+      if (!track) return;
+      if (!(track instanceof HTMLDivElement)) return;
+
+      const location = e.clientX - tracks.getBoundingClientRect().left;
+      if (location < 0) return track.style.left = `${0}px`
+      track.style.left = `${location}px`
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mousemove', handleMouseMove);
+    }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const trackControlsContainer = trackControlsRef.current;
@@ -86,7 +135,7 @@ const Timeline = ({
   const handleDelete = (trackToDelete: Track) => {
     setTracks(tracks.filter(track => track !== trackToDelete))
   }
-
+  
   return (
     <div className={styles.timeline}>
       <div className={styles.rightColumn}>
@@ -126,7 +175,9 @@ const Timeline = ({
                   left: track.elements[0]?.start / 40,
                   width: track.elements[0]?.duration / 40
                 }}
-              />
+              >
+                <div className={styles.trackMoveHandle} onMouseDown={e => movingTrackId = i}/>
+              </div>
             )
           })}
         </div>
