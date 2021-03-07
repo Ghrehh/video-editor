@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import Canvas from 'components/Canvas';
 import Timeline from 'components/Timeline';
 import SelectedTrack from 'components/SelectedTrack';
 import drawTracks from 'lib/canvas'; 
 import render from 'lib/render';
-import tune from 'tune.m4a';
+//import tune from 'tune.m4a';
 import { Track } from 'types/Track';
 
 const num = (inputString: string): number => {
@@ -157,6 +157,7 @@ function App() {
     setTracks(tracksCopy);
   }
 
+  /*
   useEffect(() => {
     const audio = document.createElement('audio');
     audio.ondurationchange = () => {
@@ -184,7 +185,7 @@ function App() {
     }
     audio.src = tune;
 
-  }, [])
+  }, [])*/
 
   const handleFileUpload = (files: FileList | null) => {
     if (!files) return;
@@ -249,7 +250,8 @@ function App() {
         frameRate={frameRate}
       />
       <button onClick={handleAddText}>Add Text</button>
-      <button onClick={handleRender}>Render</button>
+      {audioUrl === '' && <p>Add audio to render</p>}
+      {audioUrl !== '' && <button onClick={handleRender}>Render</button>}
     </>
   );
 }

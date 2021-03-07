@@ -1,8 +1,7 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { Track } from 'types/Track';
-import { Rect, isRect } from 'types/Rect';
-import { Text, isText } from 'types/Text';
-import styles from './styles.module.css';
+import { isRect } from 'types/Rect';
+import { isText } from 'types/Text';
 
 interface SelectedTrackInterface {
   track: Track;

@@ -1,5 +1,4 @@
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
-import tune from 'tune.m4a';
 
 const ffmpeg = createFFmpeg({ log: true });
 
