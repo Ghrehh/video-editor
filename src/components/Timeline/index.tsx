@@ -13,6 +13,8 @@ interface TimelineInterface {
 }
 
 let movingTrackId = -1;
+let durationChangeRightId = -1;
+let durationChangeLeftId = -1;
 
 const Timeline = ({
   tracks,
@@ -56,12 +58,26 @@ const Timeline = ({
       if (!trackCopy) return;
       trackCopy.start = Math.floor(location * 40);
       setTracks(tracksCopy)
-      movingTrackId = -1;
     }
+    movingTrackId = -1;
+    durationChangeLeftId = -1;
+    durationChangeRightId = -1;
   }
 
   const handleMouseMove = (e: any) => {
     if (movingTrackId > -1) {
+      const tracks = tracksRef.current;
+
+      if (!tracks) return;
+
+      const track = Array.from(tracks.children)[movingTrackId]
+      if (!track) return;
+      if (!(track instanceof HTMLDivElement)) return;
+
+      const location = e.clientX - tracks.getBoundingClientRect().left;
+      if (location < 0) return track.style.left = `${0}px`
+      track.style.left = `${location}px`
+    } else if (durationChangeRightId > -1) {
       const tracks = tracksRef.current;
 
       if (!tracks) return;
@@ -177,6 +193,10 @@ const Timeline = ({
                 }}
               >
                 <div className={styles.trackMoveHandle} onMouseDown={e => movingTrackId = i}/>
+                <div className={styles.durationHandles}>
+                  <div className={styles.durationHandleLeft} onMouseDown={e => durationChangeLeftId = i}/>
+                  <div className={styles.durationHandleRight} onMouseDown={e => durationChangeRightId = i}/>
+                </div>
               </div>
             )
           })}

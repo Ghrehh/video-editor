@@ -3,14 +3,21 @@ import { Track } from 'types/Track';
 import render from 'lib/canvas';
 import styles from './styles.module.css';
 
-const Canvas = ({ tracks, cursor }: { tracks: Track[], cursor: number }) => {
+interface CanvasInterface {
+  tracks: Track[];
+  cursor: number;
+  selectedTrack: number;
+  changeSelectedTrack: (n: Track) => void;
+}
+
+const Canvas = ({ tracks, cursor, selectedTrack, changeSelectedTrack }: CanvasInterface) => {
   const canvasRef: React.RefObject<HTMLCanvasElement> = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    render(canvas, cursor, tracks);
+    render(canvas, cursor, tracks, selectedTrack);
   });
 
   return (

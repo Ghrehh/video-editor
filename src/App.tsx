@@ -237,7 +237,12 @@ function App() {
         Upload Audio (only MP3s work because I'm lazy)
         <input type="file" id="input" onChange={e => handleFileUpload(e.target.files)}/>
       </label>
-      <Canvas tracks={tracks} cursor={cursor} />
+      <Canvas
+        tracks={tracks}
+        cursor={cursor}
+        changeSelectedTrack={(updatedTrack: Track) => updateTrack(selectedTrack, updatedTrack)}
+        selectedTrack={selectedTrack}
+      />
       {tracks[selectedTrack] && <SelectedTrack setTrack={(updatedTrack: Track) => updateTrack(selectedTrack, updatedTrack)} track={tracks[selectedTrack]}
       />}
       <Timeline

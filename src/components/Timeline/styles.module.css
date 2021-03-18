@@ -48,6 +48,8 @@
   background-color: gray;
   margin-bottom: 10px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column
 }
 
 .trackMoveHandle {
@@ -55,4 +57,22 @@
   height: 14px;
   overflow: hidden;
   background-color: green;
+}
+
+.durationHandles {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.durationHandleRight {
+  background-color: blue;
+  width: 10px;
+  height: 100%;
+}
+
+.durationHandleLeft {
+  background-color: orange;
+  width: 10px;
+  height: 100%;
 }
